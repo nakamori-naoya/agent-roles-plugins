@@ -2,7 +2,7 @@
 
 > 型: デザインドック / RFC ／ 読み手: harness plugin、Herdr、herdr-remote の設計・実装を判断する人
 
-- **状態**: レビュー中
+- **状態**: MVP実装中
 - **作成者**: Codex（統合案）、fable5役の独立サブエージェント（独立案）
 - **レビュアー**: リポジトリ所有者
 - **期限**: 未定
@@ -11,9 +11,9 @@
 
 **課題**: role、fleet、pane 配置、指示配送、fleet 間連携が同じ層へ入ると、Herdr の都合が艦隊の業務ルールになる。pane の移動や再生成だけで宛先が壊れ、別 runtime も選べない。
 
-**推奨案**: `Fleet Core` を正本にする。role と権限、fleet の desired state、task、成果物、イベントを Core が持つ。Herdr は Runtime Adapter と View Adapter に分ける。
+**推奨案**: reusableなroleと権限上限は`agent-roles`、fleetのdesired state、roleRef、task、command、eventは`Fleet Core`を正本にする。HerdrはRuntime AdapterとView Adapterに分ける。
 
-**求める判断**: `agent-roles-plugins` と `agent-fleet-plugins` を分けるか。MVP を local Herdr、manager 1、worker 2、reviewer 1へ絞るか。この2点を決めてほしい。
+**決定**: role catalogとFleetを別repositoryにし、FleetもCoreとHerdr Adapterを別installable pluginにする。MVPはlocal Herdr、manager 1、worker 2へ絞る。
 
 ## 背景と課題
 
@@ -259,10 +259,8 @@ agent-roles-plugins/
 └─ agent-roles       role、成果物型、権限、関係性
 
 agent-fleet-plugins/
-├─ fleet-design      Fleet Spec の作成・検査
-├─ fleet-control     Fleet Core の command、state、reconcile
-├─ fleet-herdr       Herdr Runtime / View adapter
-└─ create-herdr-fleet  design → validate → provision → converge
+├─ agent-fleet-core   Fleet Spec、command、state、event、outbox
+└─ agent-fleet-herdr  Herdr Runtime / View adapter
 ```
 
 永続 controller は skill prompt の外に置く。MVP は `fleetctl reconcile` の明示実行で始め、必要になった時点で `fleetd` へ常駐化する。
@@ -274,17 +272,16 @@ agent-fleet-plugins/
 **最初の成功条件は、pane ではなく論理 Agent ID へ指示できることである。** multi-host と fleet 間連携は、この条件を満たしてから追加する。
 
 - local host のみ
-- manager 1、worker 2、reviewer 1
+- manager 1、worker 2
 - manager-worker pattern のみ
 - 1 workspace、最大4 member pane
 - `agent start`、`agent prompt`、`agent wait`
 - SQLite state、event ledger、outbox
 - task assign、progress、blocked、complete
-- human approval
-- pane metadata 表示
-- pane 消失時に1回だけ再作成
+- dry-runを既定にし、実Herdr操作は明示executeだけ
+- pane消失を検出し、明示rebindまで停止
 
-MVP の受け入れ条件は3つある。manager paneから論理 workerへtaskを割り当てられる。pane再配置後も同じAgentRefへ指示できる。blockedと成果物がFleet Coreへ戻る。
+MVP の受け入れ条件は3つある。検査済みFleet Specからcommand-deckをdry-run計画できる。managerが論理workerへtaskを割り当てられる。blockedと成果物が明示reportとしてFleet Coreへ戻る。
 
 ## 選択肢の比較
 
@@ -323,22 +320,21 @@ MVP の受け入れ条件は3つある。manager paneから論理 workerへtask�
 
 **旧 `agent-roles` は意味を変えず、独立 plugin として先に移植する。** role の5分類、成果物型、関係性、停止権限を Fleet Core から参照する。
 
-1. `agent-roles-plugins` に旧 role catalog と検査を移植する。
-2. `agent-fleet-plugins` を作り、Fleet Spec と schema だけを実装する。
-3. `fleetctl` に SQLite、Policy、Binding、Outbox、reconcile を実装する。
-4. local Herdr Runtime / View adapter を実装する。
-5. command-deck の metadata と layout reconcile を追加する。
-6. MVP の受け入れ条件を実 Herdr の隔離 workspace で検証する。
-7. multi-host と Fleet Gateway は別 RFC で判断する。
+1. `agent-roles-plugins` に旧 role catalog と検査を移植する。完了。
+2. `agent-fleet-plugins` にFleet Spec、schema、SQLite Coreを実装する。完了。
+3. Herdr Runtime / View adapterとcommand-deck dry-runを実装する。完了。
+4. mock実行でbinding、view保存、timeout unknown、lost検出を検証する。完了。
+5. 実Herdrの隔離workspaceでexecute provisionを検証する。
+6. multi-host、Fleet Gateway、5 member以上のsquad tabは別RFCで判断する。
 
 旧 `agent-roles` の設定形式は維持する。Fleet Core は version 付き `roleRef` で参照し、role 定義を内部へ複製しない。
 
 問題があれば新規 fleet の provision を止める。既存 pane は自動 close せず、Runtime Binding を解除して手動運用へ戻す。
 
-## 決めてほしいこと
+## 決定ログ
 
-1. `agent-roles-plugins` と `agent-fleet-plugins` を別 repository にするか。
-2. Adapter 型を採用し、Fleet Core を herdr / herdr-remote から独立させるか。
-3. MVP を local host、manager 1、worker 2、reviewer 1へ限定するか。
-4. manager から member への指示を、論理宛先と durable outbox 経由に限定するか。
-5. command-deck を「member 4つまでは同一tab、5つ以上はsquad tab」にするか。
+1. `agent-roles-plugins` と `agent-fleet-plugins` を別repositoryにする。
+2. `agent-fleet-core` と `agent-fleet-herdr` を別installable pluginにし、Herdr操作権限をCoreへ同梱しない。
+3. MVPをlocal host、manager 1、worker 2、同一tabのcommand-deckへ限定する。
+4. managerからmemberへの指示をlogical agent宛てのdurable outboxに限定する。
+5. pane消失は自動修復せずlostとして停止し、明示rebindを要求する。
