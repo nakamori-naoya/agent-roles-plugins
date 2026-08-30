@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-labelledby="title desc">
+  <title id="title">Fleet Core と Herdr adapter の所有境界</title>
+  <desc id="desc">人間とマネージャーが Fleet Core へ型付き command を送り、Runtime、View、Transport の各 port を介して Herdr adapter へ接続する構成図。Fleet Core は pane ID を保持しない。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .subtitle { font: 400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+      .layer { font: 700 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; letter-spacing: .08em; }
+      .box-title { font: 700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .box-text { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+      .small { font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; }
+      .white { fill: #ffffff; }
+      .arrow { fill: none; stroke: #475569; stroke-width: 2.2; marker-end: url(#arrow); }
+      .dashed { fill: none; stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1440" height="980" fill="#f7f8fa"/>
+  <text x="72" y="55" class="title">Fleet Core と Herdr adapter の所有境界</text>
+  <text x="72" y="84" class="subtitle">論理的な艦隊は Core が管理し、Herdr は実行場所と見え方だけを提供する</text>
+
+  <text x="72" y="128" class="layer">COMMAND SOURCES</text>
+  <g filter="url(#shadow)">
+    <rect x="72" y="145" width="280" height="82" rx="14" fill="#ffffff" stroke="#cbd5e1"/>
+    <rect x="380" y="145" width="280" height="82" rx="14" fill="#ffffff" stroke="#cbd5e1"/>
+    <rect x="688" y="145" width="280" height="82" rx="14" fill="#ffffff" stroke="#cbd5e1"/>
+  </g>
+  <text x="212" y="178" text-anchor="middle" class="box-title">Human Operator</text>
+  <text x="212" y="203" text-anchor="middle" class="box-text">承認・停止・優先順位</text>
+  <text x="520" y="178" text-anchor="middle" class="box-title">Manager Agent</text>
+  <text x="520" y="203" text-anchor="middle" class="box-text">task.assign / cancel / scale</text>
+  <text x="828" y="178" text-anchor="middle" class="box-title">Fleet UI</text>
+  <text x="828" y="203" text-anchor="middle" class="box-text">status・artifact・delivery</text>
+
+  <path d="M212 227 L212 260 L420 260 L420 290" class="arrow"/>
+  <path d="M520 227 L520 290" class="arrow"/>
+  <path d="M828 227 L828 260 L640 260 L640 290" class="arrow"/>
+  <text x="535" y="252" class="small">型付き command / query</text>
+
+  <text x="72" y="286" class="layer">FLEET CORE — 正本</text>
+  <g filter="url(#shadow)">
+    <rect x="72" y="300" width="1296" height="300" rx="20" fill="#eef4ff" stroke="#2563eb" stroke-width="2"/>
+  </g>
+  <text x="102" y="342" class="box-title">Fleet Controller / Reconciler</text>
+  <rect x="1060" y="320" width="268" height="38" rx="19" fill="#fee2e2"/>
+  <text x="1194" y="344" text-anchor="middle" class="small" fill="#991b1b">Core は pane ID を知らない</text>
+
+  <g>
+    <rect x="104" y="382" width="230" height="150" rx="14" fill="#ffffff" stroke="#93c5fd"/>
+    <rect x="354" y="382" width="230" height="150" rx="14" fill="#ffffff" stroke="#93c5fd"/>
+    <rect x="604" y="382" width="230" height="150" rx="14" fill="#ffffff" stroke="#93c5fd"/>
+    <rect x="854" y="382" width="230" height="150" rx="14" fill="#ffffff" stroke="#93c5fd"/>
+    <rect x="1104" y="382" width="230" height="150" rx="14" fill="#ffffff" stroke="#93c5fd"/>
+  </g>
+  <text x="219" y="420" text-anchor="middle" class="box-title">Role / Policy</text>
+  <text x="219" y="450" text-anchor="middle" class="box-text">責務・権限・入出力</text>
+  <text x="219" y="475" text-anchor="middle" class="box-text">principal × action × resource</text>
+
+  <text x="469" y="420" text-anchor="middle" class="box-title">Task Router</text>
+  <text x="469" y="450" text-anchor="middle" class="box-text">論理 AgentRef 宛て</text>
+  <text x="469" y="475" text-anchor="middle" class="box-text">Inbox / Durable Outbox</text>
+
+  <text x="719" y="420" text-anchor="middle" class="box-title">State / Events</text>
+  <text x="719" y="450" text-anchor="middle" class="box-text">desired / observed</text>
+  <text x="719" y="475" text-anchor="middle" class="box-text">generation / idempotency</text>
+
+  <text x="969" y="420" text-anchor="middle" class="box-title">Artifact Registry</text>
+  <text x="969" y="450" text-anchor="middle" class="box-text">URI・schema・checksum</text>
+  <text x="969" y="475" text-anchor="middle" class="box-text">pane output を共有しない</text>
+
+  <text x="1219" y="420" text-anchor="middle" class="box-title">Fleet Gateway</text>
+  <text x="1219" y="450" text-anchor="middle" class="box-text">公開 service contract</text>
+  <text x="1219" y="475" text-anchor="middle" class="box-text">fleet 間の認可境界</text>
+
+  <text x="72" y="643" class="layer">PORTS — 交換可能な境界</text>
+  <g>
+    <rect x="138" y="660" width="320" height="70" rx="35" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="560" y="660" width="320" height="70" rx="35" fill="#dcfce7" stroke="#059669" stroke-width="2"/>
+    <rect x="982" y="660" width="320" height="70" rx="35" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  </g>
+  <text x="298" y="703" text-anchor="middle" class="box-title">Runtime Port</text>
+  <text x="720" y="703" text-anchor="middle" class="box-title">View Port</text>
+  <text x="1142" y="703" text-anchor="middle" class="box-title">Transport Port</text>
+  <path d="M298 600 L298 660" class="arrow"/>
+  <path d="M720 600 L720 660" class="arrow"/>
+  <path d="M1142 600 L1142 660" class="arrow"/>
+
+  <text x="72" y="777" class="layer">ADAPTERS</text>
+  <g filter="url(#shadow)">
+    <rect x="108" y="792" width="380" height="100" rx="16" fill="#ffffff" stroke="#a78bfa" stroke-width="2"/>
+    <rect x="530" y="792" width="380" height="100" rx="16" fill="#ffffff" stroke="#6ee7b7" stroke-width="2"/>
+    <rect x="952" y="792" width="380" height="100" rx="16" fill="#ffffff" stroke="#fdba74" stroke-width="2"/>
+  </g>
+  <text x="298" y="830" text-anchor="middle" class="box-title">Herdr Runtime Adapter</text>
+  <text x="298" y="858" text-anchor="middle" class="box-text">agent start / prompt / wait / read</text>
+  <text x="720" y="830" text-anchor="middle" class="box-title">Herdr View Adapter</text>
+  <text x="720" y="858" text-anchor="middle" class="box-text">tab / split / ratio / metadata</text>
+  <text x="1142" y="830" text-anchor="middle" class="box-title">local / SSH / remote</text>
+  <text x="1142" y="858" text-anchor="middle" class="box-text">接続方式は fleet から独立</text>
+  <path d="M298 730 L298 792" class="arrow"/>
+  <path d="M720 730 L720 792" class="arrow"/>
+  <path d="M1142 730 L1142 792" class="arrow"/>
+
+  <rect x="272" y="925" width="896" height="42" rx="12" fill="#172033"/>
+  <text x="720" y="952" text-anchor="middle" class="white" style="font: 600 15px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">Herdr workspace / tab / pane / agent　—　pane ID と UI geometry はこの境界の内側</text>
+  <path d="M298 892 L298 925" class="arrow"/>
+  <path d="M720 892 L720 925" class="arrow"/>
+  <path d="M1142 892 L1142 925" class="arrow"/>
+
+  <rect x="1020" y="145" width="348" height="82" rx="14" fill="#f1f5f9" stroke="#94a3b8" stroke-dasharray="7 6"/>
+  <text x="1194" y="177" text-anchor="middle" class="box-title">将来の差し替え</text>
+  <text x="1194" y="202" text-anchor="middle" class="box-text">container / tmux / headless / Web UI</text>
+  <path d="M1194 227 L1194 272 L1338 272 L1338 660" class="dashed"/>
+</svg>

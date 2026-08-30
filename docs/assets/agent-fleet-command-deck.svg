@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
+  <title id="title">Herdr command-deck の適応レイアウト</title>
+  <desc id="desc">member が4つまでは manager と同じタブへ置き、5つ以上は command deck と squad tab に分割するUI案。</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <style>
+      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .subtitle { font: 400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+      .panel-title { font: 700 21px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .tab { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #ffffff; }
+      .pane-title { font: 700 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .pane-text { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+      .note { font: 600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1440" height="760" fill="#f7f8fa"/>
+  <text x="72" y="55" class="title">Herdr command-deck の適応レイアウト</text>
+  <text x="72" y="84" class="subtitle">pane の位置は人間向けの投影であり、task routing や role 判定には使わない</text>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="125" width="620" height="550" rx="22" fill="#ffffff" stroke="#cbd5e1"/>
+    <rect x="748" y="125" width="620" height="550" rx="22" fill="#ffffff" stroke="#cbd5e1"/>
+  </g>
+
+  <text x="104" y="166" class="panel-title">1〜4 member：1 tab で同時に見る</text>
+  <rect x="104" y="190" width="556" height="36" rx="10" fill="#334155"/>
+  <text x="126" y="214" class="tab">Tab 1 · command-deck</text>
+
+  <rect x="104" y="240" width="178" height="372" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="193" y="280" text-anchor="middle" class="pane-title">Manager · 32%</text>
+  <text x="193" y="311" text-anchor="middle" class="pane-text">fleet status</text>
+  <text x="193" y="335" text-anchor="middle" class="pane-text">指示・承認</text>
+  <text x="193" y="359" text-anchor="middle" class="pane-text">delivery unknown</text>
+  <rect x="129" y="390" width="128" height="30" rx="15" fill="#2563eb"/>
+  <text x="193" y="410" text-anchor="middle" class="tab">READY 3 / 4</text>
+
+  <rect x="298" y="240" width="168" height="178" rx="14" fill="#ecfdf5" stroke="#10b981"/>
+  <rect x="482" y="240" width="178" height="178" rx="14" fill="#ecfdf5" stroke="#10b981"/>
+  <rect x="298" y="434" width="168" height="178" rx="14" fill="#fff7ed" stroke="#f97316"/>
+  <rect x="482" y="434" width="178" height="178" rx="14" fill="#fef2f2" stroke="#ef4444"/>
+  <text x="382" y="280" text-anchor="middle" class="pane-title">Worker A</text>
+  <text x="382" y="309" text-anchor="middle" class="pane-text">task-12 · working</text>
+  <text x="571" y="280" text-anchor="middle" class="pane-title">Worker B</text>
+  <text x="571" y="309" text-anchor="middle" class="pane-text">task-13 · idle</text>
+  <text x="382" y="474" text-anchor="middle" class="pane-title">Researcher</text>
+  <text x="382" y="503" text-anchor="middle" class="pane-text">fact-4 · working</text>
+  <text x="571" y="474" text-anchor="middle" class="pane-title">Reviewer</text>
+  <text x="571" y="503" text-anchor="middle" class="pane-text">blocked · approval</text>
+
+  <text x="780" y="166" class="panel-title">5 member以上：command deck と squad を分ける</text>
+  <rect x="780" y="190" width="556" height="36" rx="10" fill="#334155"/>
+  <text x="800" y="214" class="tab">Tab 1 · command-deck</text>
+  <rect x="780" y="240" width="556" height="132" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="816" y="278" class="pane-title">Manager + Fleet Summary</text>
+  <text x="816" y="307" class="pane-text">squad状態、承認待ち、失敗、artifact、予算を集約</text>
+  <rect x="1152" y="270" width="150" height="34" rx="17" fill="#2563eb"/>
+  <text x="1227" y="292" text-anchor="middle" class="tab">DEGRADED</text>
+
+  <rect x="780" y="398" width="168" height="36" rx="10" fill="#475569"/>
+  <rect x="964" y="398" width="168" height="36" rx="10" fill="#475569"/>
+  <rect x="1148" y="398" width="188" height="36" rx="10" fill="#475569"/>
+  <text x="864" y="422" text-anchor="middle" class="tab">Tab 2 · design</text>
+  <text x="1048" y="422" text-anchor="middle" class="tab">Tab 3 · build</text>
+  <text x="1242" y="422" text-anchor="middle" class="tab">Tab 4 · verify</text>
+
+  <rect x="780" y="448" width="168" height="130" rx="14" fill="#f5f3ff" stroke="#8b5cf6"/>
+  <rect x="964" y="448" width="168" height="130" rx="14" fill="#ecfdf5" stroke="#10b981"/>
+  <rect x="1148" y="448" width="188" height="130" rx="14" fill="#fff7ed" stroke="#f97316"/>
+  <text x="864" y="486" text-anchor="middle" class="pane-title">Design Squad</text>
+  <text x="864" y="516" text-anchor="middle" class="pane-text">advisor / researcher</text>
+  <text x="1048" y="486" text-anchor="middle" class="pane-title">Build Squad</text>
+  <text x="1048" y="516" text-anchor="middle" class="pane-text">worker × 4まで</text>
+  <text x="1242" y="486" text-anchor="middle" class="pane-title">Verify Squad</text>
+  <text x="1242" y="516" text-anchor="middle" class="pane-text">reviewer / tests</text>
+
+  <rect x="810" y="610" width="496" height="38" rx="19" fill="#f1f5f9"/>
+  <text x="1058" y="635" text-anchor="middle" class="note">member数変更時だけ reconcile。手動 resize は尊重する</text>
+
+  <rect x="160" y="700" width="1120" height="42" rx="12" fill="#172033"/>
+  <text x="720" y="727" text-anchor="middle" class="tab">表示 metadata: fleet / role / task / delivery / blocked reason　　宛先: 常に論理 AgentRef</text>
+</svg>
