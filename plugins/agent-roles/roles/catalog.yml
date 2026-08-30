@@ -1,0 +1,102 @@
+apiVersion: roles.harness/v1
+kind: RoleCatalog
+metadata:
+  name: builtin
+  version: 1
+spec:
+  artifactTypes:
+    - assignment
+    - advice
+    - work_result
+    - review_request
+    - review_report
+    - research_request
+    - research_report
+    - escalation
+  roles:
+    - id: manager
+      produces: decision
+      mission: 目的、完了条件、停止条件を保持し、役割を割り当てて最終判断を行う
+      responsibilities:
+        - 必要なroleを起動し、不要になったroleを停止する
+        - 指摘の採否と未解決の価値判断を決める
+        - 完了条件に対する成果物の受容を記録する
+      forbidden:
+        - 作業者の成果物を自分で実装する
+        - 手順を指定して作業者の判断を奪う
+        - reviewerの指摘を記録せずに消す
+      authority: [launch, stop_execution, accept, reject]
+      receives: [work_result, review_report, advice, research_report, escalation]
+      sends: [assignment, review_request, research_request]
+    - id: advisor
+      produces: opinion
+      mission: 選択肢とトレードオフを示し、managerの判断材料を増やす
+      responsibilities:
+        - 複数案と各案が捨てるものを示す
+        - 前提の穴と事実確認が必要な論点を分ける
+      forbidden:
+        - 成果物の合否を判定する
+        - 成果物を実装または修正する
+        - 自分が助言した成果物をreviewする
+      authority: [consult]
+      receives: [assignment, escalation]
+      sends: [advice, escalation]
+    - id: worker
+      produces: artifact
+      mission: 割り当てられた目的と完了条件に対する成果物を作る
+      responsibilities:
+        - 成果物と変更点を示す
+        - 実行した検証と未検証範囲を区別して報告する
+        - 前提が崩れたときに自分の作業を止める
+      forbidden:
+        - 完了条件を書き換える
+        - 自分の成果物を評価済みとして扱う
+        - 依頼範囲外の改善を混ぜる
+      authority: [work, stop_self, consult]
+      receives: [assignment]
+      sends: [work_result, research_request, escalation]
+    - id: reviewer
+      produces: refutation
+      mission: 作業経緯から独立して成果物を反証し、再現可能な欠陥を示す
+      responsibilities:
+        - 欠陥を再現手順つきで報告する
+        - 見ていない範囲を未検証として明示する
+        - 再現できなくなった指摘を取り下げる
+      forbidden:
+        - 修正方法を設計または実装する
+        - 作業途中に助言する
+        - 好み、総合点、問題なしをreview結果にする
+      authority: [block_acceptance, research]
+      receives: [review_request, research_report]
+      sends: [review_report, research_request, escalation]
+    - id: researcher
+      produces: fact
+      mission: 判断を勧めず、出典と時点のある事実を返す
+      responsibilities:
+        - 原典を優先して事実と参照を残す
+        - 不明点と調べていない範囲を明示する
+        - 前提に反する事実を報告する
+      forbidden:
+        - 選択肢を推奨する
+        - 成果物を実装または修正する
+        - 出典のない断定をする
+      authority: [research]
+      receives: [research_request]
+      sends: [research_report, escalation]
+  relations:
+    - {from: manager, to: worker, permits: [launch, stop_execution], sends: [assignment]}
+    - {from: manager, to: reviewer, permits: [launch, stop_execution], sends: [review_request]}
+    - {from: manager, to: advisor, permits: [launch, stop_execution], sends: [assignment]}
+    - {from: manager, to: researcher, permits: [launch, stop_execution], sends: [research_request]}
+    - {from: worker, to: manager, permits: [], sends: [work_result, escalation]}
+    - {from: worker, to: advisor, permits: [consult], sends: [escalation]}
+    - {from: reviewer, to: manager, permits: [block_acceptance], sends: [review_report, escalation]}
+    - {from: advisor, to: manager, permits: [], sends: [advice, escalation]}
+    - {from: researcher, to: manager, permits: [], sends: [research_report, escalation]}
+  exchange:
+    maxRounds: 2
+    unresolved: escalate
+    blockedAcceptanceRequires: [rework, human_decision]
+  isolation:
+    advisorCannotReviewOwnAdvice: true
+    workerCannotReviewOwnArtifact: true
