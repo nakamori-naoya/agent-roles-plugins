@@ -59,7 +59,7 @@ def validate(catalog: dict) -> dict:
     if not isinstance(roles, list) or not roles:
         raise ValueError("spec.roles must be a non-empty list")
 
-    role_keys = {"id", "produces", "mission", "responsibilities", "forbidden", "authority", "receives", "sends"}
+    role_keys = {"id", "version", "produces", "mission", "responsibilities", "forbidden", "authority", "receives", "sends"}
     role_ids: list[str] = []
     for index, role in enumerate(roles):
         if not isinstance(role, dict):
@@ -68,6 +68,8 @@ def validate(catalog: dict) -> dict:
         role_id = role["id"]
         if not isinstance(role_id, str) or not role_id:
             raise ValueError(f"spec.roles[{index}].id must be a non-empty string")
+        if not isinstance(role["version"], int) or role["version"] < 1:
+            raise ValueError(f"role {role_id}.version must be a positive integer")
         role_ids.append(role_id)
         for key in ("responsibilities", "forbidden", "authority", "receives", "sends"):
             if not isinstance(role[key], list):

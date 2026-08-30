@@ -15,6 +15,7 @@ spec:
     - escalation
   roles:
     - id: manager
+      version: 1
       produces: decision
       mission: 目的、完了条件、停止条件を保持し、役割を割り当てて最終判断を行う
       responsibilities:
@@ -29,6 +30,7 @@ spec:
       receives: [work_result, review_report, advice, research_report, escalation]
       sends: [assignment, review_request, research_request]
     - id: advisor
+      version: 1
       produces: opinion
       mission: 選択肢とトレードオフを示し、managerの判断材料を増やす
       responsibilities:
@@ -42,6 +44,7 @@ spec:
       receives: [assignment, escalation]
       sends: [advice, escalation]
     - id: worker
+      version: 1
       produces: artifact
       mission: 割り当てられた目的と完了条件に対する成果物を作る
       responsibilities:
@@ -56,6 +59,7 @@ spec:
       receives: [assignment]
       sends: [work_result, research_request, escalation]
     - id: reviewer
+      version: 1
       produces: refutation
       mission: 作業経緯から独立して成果物を反証し、再現可能な欠陥を示す
       responsibilities:
@@ -70,6 +74,7 @@ spec:
       receives: [review_request, research_report]
       sends: [review_report, research_request, escalation]
     - id: researcher
+      version: 1
       produces: fact
       mission: 判断を勧めず、出典と時点のある事実を返す
       responsibilities:
