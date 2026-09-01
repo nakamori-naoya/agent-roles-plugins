@@ -32,7 +32,7 @@ python3 "${PLUGIN_ROOT}/scripts/validate_catalog.py" "${PLUGIN_ROOT}/roles/catal
 
 ## 報告する
 
-- 立てるroleと、立てないrole
+- 割り当てるroleと、割り当てないrole
 - roleごとの目的、完了条件、停止条件、期待する成果物
 - 許可された受け渡し経路
 - reviewer不在など未検証になる範囲

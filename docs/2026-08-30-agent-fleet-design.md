@@ -318,7 +318,7 @@ MVP の受け入れ条件は3つある。検査済みFleet Specからcommand-dec
 
 ## 移行計画・後方互換
 
-**旧 `agent-roles` は意味を変えず、独立 plugin として先に移植する。** role の5分類、成果物型、関係性、停止権限を Fleet Core から参照する。
+**旧 `agent-roles` は意味を変えず、独立 plugin として先に移植する。** role の5分類、成果物型、関係性、割当終了権限を Fleet Core から参照する。
 
 1. `agent-roles-plugins` に旧 role catalog と検査を移植する。完了。
 2. `agent-fleet-plugins` にFleet Spec、schema、SQLite Coreを実装する。完了。

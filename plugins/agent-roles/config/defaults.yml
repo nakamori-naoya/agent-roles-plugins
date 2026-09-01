@@ -2,7 +2,7 @@ version: 1
 catalog: roles/catalog.yml
 instructions:
   assignment:
-    directive: 仕事に必要なroleだけを立て、目的・完了条件・停止条件・期待する成果物を渡す
+    directive: 仕事に必要なroleだけを割り当て、目的・完了条件・停止条件・期待する成果物を渡す
   boundary:
     directive: roleの成果物型と権限を混ぜず、担い手がいないroleを他roleへ暗黙に兼任させない
   settlement:

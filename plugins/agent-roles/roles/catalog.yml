@@ -19,14 +19,14 @@ spec:
       produces: decision
       mission: 目的、完了条件、停止条件を保持し、役割を割り当てて最終判断を行う
       responsibilities:
-        - 必要なroleを起動し、不要になったroleを停止する
+        - 必要なroleを割り当て、不要になったroleの割当を終了する
         - 指摘の採否と未解決の価値判断を決める
         - 完了条件に対する成果物の受容を記録する
       forbidden:
         - 作業者の成果物を自分で実装する
         - 手順を指定して作業者の判断を奪う
         - reviewerの指摘を記録せずに消す
-      authority: [launch, stop_execution, accept, reject]
+      authority: [assign, end_assignment, accept, reject]
       receives: [work_result, review_report, advice, research_report, escalation]
       sends: [assignment, review_request, research_request]
     - id: advisor
@@ -89,10 +89,10 @@ spec:
       receives: [research_request]
       sends: [research_report, escalation]
   relations:
-    - {from: manager, to: worker, permits: [launch, stop_execution], sends: [assignment]}
-    - {from: manager, to: reviewer, permits: [launch, stop_execution], sends: [review_request]}
-    - {from: manager, to: advisor, permits: [launch, stop_execution], sends: [assignment]}
-    - {from: manager, to: researcher, permits: [launch, stop_execution], sends: [research_request]}
+    - {from: manager, to: worker, permits: [assign, end_assignment], sends: [assignment]}
+    - {from: manager, to: reviewer, permits: [assign, end_assignment], sends: [review_request]}
+    - {from: manager, to: advisor, permits: [assign, end_assignment], sends: [assignment]}
+    - {from: manager, to: researcher, permits: [assign, end_assignment], sends: [research_request]}
     - {from: worker, to: manager, permits: [], sends: [work_result, escalation]}
     - {from: worker, to: advisor, permits: [consult], sends: [escalation]}
     - {from: reviewer, to: manager, permits: [block_acceptance], sends: [review_report, escalation]}
@@ -102,6 +102,9 @@ spec:
     maxRounds: 2
     unresolved: escalate
     blockedAcceptanceRequires: [rework, human_decision]
+    duplicates:
+      assignment: preserve_existing_until_end
+      report: preserve_existing_unless_content_changed
   isolation:
     advisorCannotReviewOwnAdvice: true
     workerCannotReviewOwnArtifact: true
