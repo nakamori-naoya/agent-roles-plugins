@@ -3,6 +3,6 @@
   "owner": {"name": "NaoyaNakamori"},
   "description": "複数agentの役割・成果物・権限境界をYAML catalogで配布するmarketplace",
   "plugins": [
-    {"name":"agent-roles","source":"./plugins/agent-roles","description":"manager、advisor、worker、reviewer、researcherの役割を割り当てる","version":"0.1.0"}
+    {"name":"agent-roles","source":"./plugins/agent-roles","description":"manager、advisor、worker、reviewer、researcherの役割を割り当てる","version":"0.1.1"}
   ]
 }

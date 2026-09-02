@@ -16,6 +16,17 @@ python3 "${PLUGIN_ROOT}/scripts/validate_catalog.py" "${PLUGIN_ROOT}/roles/catal
 
 検査が失敗したcatalogを使わない。既定の静的方針は`config/defaults.yml`、roleと関係の正本は`roles/catalog.yml`にある。
 
+## 検査済みCatalogを公開する
+
+Fleetなど別の実行機構へ渡す場合は、相手にplugin内部fileを探索させない。版を含む利用者管理pathへ、検査済みJSONを明示的に書き出す。
+
+```bash
+python3 "${PLUGIN_ROOT}/scripts/export_catalog.py" \
+  --target "$HOME/.config/agent-roles/catalogs/builtin@1.json"
+```
+
+既存内容が異なる場合は停止する。変更内容を確認して版の扱いを決めた後だけ`--replace`を使う。書き出した成果物は役割Catalogの固定版であり、Fleetの実行状態ではない。
+
 ## 必要なroleだけを割り当てる
 
 - managerは目的、完了条件、停止条件と最終判断を持つ。
