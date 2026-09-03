@@ -6,6 +6,7 @@ PLUGIN="$ROOT/plugins/agent-roles"
 failed=0
 
 python3 "$ROOT/scripts/validate-distribution.py" "$ROOT" || failed=1
+python3 "$ROOT/scripts/validate-distribution.py" --self-test "$ROOT" || failed=1
 
 for manifest in "$PLUGIN/.codex-plugin/plugin.json" "$PLUGIN/.claude-plugin/plugin.json"; do
   jq -e '.name=="agent-roles" and .version=="0.1.2"' "$manifest" >/dev/null || failed=1
