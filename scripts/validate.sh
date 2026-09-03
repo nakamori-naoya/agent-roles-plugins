@@ -5,10 +5,12 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 PLUGIN="$ROOT/plugins/agent-roles"
 failed=0
 
+python3 "$ROOT/scripts/validate-distribution.py" "$ROOT" || failed=1
+
 for manifest in "$PLUGIN/.codex-plugin/plugin.json" "$PLUGIN/.claude-plugin/plugin.json"; do
-  jq -e '.name=="agent-roles" and .version=="0.1.1"' "$manifest" >/dev/null || failed=1
+  jq -e '.name=="agent-roles" and .version=="0.1.2"' "$manifest" >/dev/null || failed=1
 done
-jq -e '.name=="agent-roles" and (.plugins|length==1) and .plugins[0].name=="agent-roles" and .plugins[0].version=="0.1.1"' \
+jq -e '.name=="agent-roles" and (.plugins|length==1) and .plugins[0].name=="agent-roles" and .plugins[0].version=="0.1.2"' \
   "$ROOT/.agents/plugins/marketplace.json" "$ROOT/.claude-plugin/marketplace.json" >/dev/null || failed=1
 
 python3 "$PLUGIN/scripts/validate_catalog.py" "$PLUGIN/roles/catalog.yml" >/dev/null || failed=1

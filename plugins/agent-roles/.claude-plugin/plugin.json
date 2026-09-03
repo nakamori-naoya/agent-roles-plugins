@@ -1,6 +1,6 @@
 {
   "name": "agent-roles",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "YAML role catalogから複数agentの責務・権限・成果物境界を割り当てる",
   "author": {"name": "NaoyaNakamori"},
   "skills": "./skills/"
