@@ -1,18 +1,25 @@
 {
   "name": "agent-roles",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "YAML role catalogから複数agentの責務・権限・成果物境界を割り当てる",
   "author": {
     "name": "NaoyaNakamori"
   },
-  "skills": "./skills/",
+  "skills": "./",
   "interface": {
     "displayName": "Agent Roles",
     "shortDescription": "複数agentへ役割と越境禁止を割り当てる",
     "longDescription": "manager、advisor、worker、reviewer、researcherを成果物の型で分離し、YAML catalogとして提供する。agentの起動やpane操作は行わない。",
     "developerName": "NaoyaNakamori",
     "category": "Productivity",
-    "capabilities": ["Skills"],
+    "capabilities": [
+      "Skills"
+    ],
     "defaultPrompt": "agent-rolesを使って、必要なagentの役割と受け渡し境界を決めてください。"
+  },
+  "metadata": {
+    "harness": {
+      "contractVersion": 1
+    }
   }
 }
