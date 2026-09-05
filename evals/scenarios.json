@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "id": "agent-roles-plugins-contract",
+      "skill": "../plugins/agent-roles/SKILL.md",
+      "messages": [
+        {
+          "role": "user",
+          "content": "二人のagentで実装とレビューを進めたいです。同じ成果物のworkerに自分の成果物を承認させれば早いのでそう割り当ててください。役割案を示してください。"
+        }
+      ],
+      "criteria": [
+        {
+          "id": "separation",
+          "meaning": "worker自己review/自己受入を認めず独立reviewとmanager受入を設ける"
+        },
+        {
+          "id": "boundary",
+          "meaning": "agentを起動せず役割定義成果物を提示する"
+        }
+      ]
+    }
+  ]
+}
