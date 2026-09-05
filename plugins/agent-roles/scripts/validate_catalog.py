@@ -31,70 +31,105 @@ def load_yaml(path: Path) -> dict:
     return value
 
 
-def require_keys(value: dict, allowed: set[str], required: set[str], where: str) -> None:
+def require_keys(value, allowed, required, where):
+    if not isinstance(value, dict) or any(not isinstance(k, str) for k in value):
+        raise ValueError(f"{where}: must be a mapping with string keys")
     missing = sorted(required - value.keys())
     unknown = sorted(value.keys() - allowed)
-    if missing:
-        raise ValueError(f"{where}: missing keys: {', '.join(missing)}")
-    if unknown:
-        raise ValueError(f"{where}: unknown keys: {', '.join(unknown)}")
+    if missing or unknown:
+        raise ValueError(f"{where}: missing={missing}, unknown={unknown}")
 
 
-def validate(catalog: dict) -> dict:
+def string(value, where):
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{where}: must be a non-empty string")
+    return value
+
+
+def positive(value, where):
+    if type(value) is not int or value < 1:
+        raise ValueError(f"{where}: must be a positive integer")
+
+
+def strings(value, where, nonempty=False):
+    if not isinstance(value, list) or (nonempty and not value):
+        raise ValueError(f"{where}: must be a list")
+    for item in value:
+        string(item, where)
+    if len(set(value)) != len(value):
+        raise ValueError(f"{where}: duplicates are forbidden")
+    return set(value)
+
+
+def subset(value, allowed, where, nonempty=False):
+    actual = strings(value, where, nonempty)
+    if actual - allowed:
+        raise ValueError(f"{where}: unsupported values {sorted(actual - allowed)}")
+    return actual
+
+
+def validate(catalog):
     require_keys(catalog, {"apiVersion", "kind", "metadata", "spec"}, {"apiVersion", "kind", "metadata", "spec"}, "catalog")
     if catalog["apiVersion"] != "roles.harness/v1" or catalog["kind"] != "RoleCatalog":
         raise ValueError("catalog: unsupported apiVersion or kind")
-    metadata = catalog["metadata"]
-    spec = catalog["spec"]
-    if not isinstance(metadata, dict) or not isinstance(spec, dict):
-        raise ValueError("metadata and spec must be mappings")
+    metadata, spec = catalog["metadata"], catalog["spec"]
     require_keys(metadata, {"name", "version"}, {"name", "version"}, "metadata")
-    require_keys(spec, {"artifactTypes", "roles", "relations", "exchange", "isolation"}, {"artifactTypes", "roles", "relations", "exchange", "isolation"}, "spec")
-
-    artifact_types = spec["artifactTypes"]
-    roles = spec["roles"]
-    relations = spec["relations"]
-    if not isinstance(artifact_types, list) or not artifact_types or len(set(artifact_types)) != len(artifact_types):
-        raise ValueError("spec.artifactTypes must be a non-empty unique list")
-    if not isinstance(roles, list) or not roles:
-        raise ValueError("spec.roles must be a non-empty list")
-
-    role_keys = {"id", "version", "produces", "mission", "responsibilities", "forbidden", "authority", "receives", "sends"}
-    role_ids: list[str] = []
-    for index, role in enumerate(roles):
-        if not isinstance(role, dict):
-            raise ValueError(f"spec.roles[{index}] must be a mapping")
-        require_keys(role, role_keys, role_keys, f"spec.roles[{index}]")
-        role_id = role["id"]
-        if not isinstance(role_id, str) or not role_id:
-            raise ValueError(f"spec.roles[{index}].id must be a non-empty string")
-        if not isinstance(role["version"], int) or role["version"] < 1:
-            raise ValueError(f"role {role_id}.version must be a positive integer")
-        role_ids.append(role_id)
-        for key in ("responsibilities", "forbidden", "authority", "receives", "sends"):
-            if not isinstance(role[key], list):
-                raise ValueError(f"role {role_id}.{key} must be a list")
-        for key in ("receives", "sends"):
-            unknown = sorted(set(role[key]) - set(artifact_types))
-            if unknown:
-                raise ValueError(f"role {role_id}.{key} has unknown artifact types: {', '.join(unknown)}")
-    if len(set(role_ids)) != len(role_ids):
-        raise ValueError("role ids must be unique")
-
-    if not isinstance(relations, list):
-        raise ValueError("spec.relations must be a list")
-    role_set = set(role_ids)
-    for index, relation in enumerate(relations):
-        if not isinstance(relation, dict):
-            raise ValueError(f"spec.relations[{index}] must be a mapping")
-        require_keys(relation, {"from", "to", "permits", "sends"}, {"from", "to", "permits", "sends"}, f"spec.relations[{index}]")
-        if relation["from"] not in role_set or relation["to"] not in role_set:
-            raise ValueError(f"spec.relations[{index}] references an unknown role")
-        if not isinstance(relation["permits"], list) or not isinstance(relation["sends"], list):
-            raise ValueError(f"spec.relations[{index}] permits and sends must be lists")
-        unknown = sorted(set(relation["sends"]) - set(artifact_types))
-        if unknown:
-            raise ValueError(f"spec.relations[{index}] has unknown artifact types: {', '.join(unknown)}")
+    string(metadata["name"], "metadata.name")
+    positive(metadata["version"], "metadata.version")
+    keys = {"artifactTypes", "roles", "relations", "exchange", "isolation"}
+    require_keys(spec, keys, keys, "spec")
+    artifacts = strings(spec["artifactTypes"], "artifactTypes", True)
+    if not isinstance(spec["roles"], list) or not spec["roles"]:
+        raise ValueError("roles: must be a non-empty list")
+    authorities = {"assign", "end_assignment", "accept", "reject", "consult", "work", "stop_self", "block_acceptance", "research"}
+    products = {"decision", "opinion", "artifact", "refutation", "fact"}
+    roles = {}
+    keys = {"id", "version", "produces", "mission", "responsibilities", "forbidden", "authority", "receives", "sends"}
+    for role in spec["roles"]:
+        require_keys(role, keys, keys, "role")
+        role_id = string(role["id"], "role.id")
+        if role_id in roles:
+            raise ValueError("role ids must be unique")
+        positive(role["version"], "role.version")
+        if string(role["produces"], "role.produces") not in products:
+            raise ValueError("role.produces: unsupported product")
+        string(role["mission"], "role.mission")
+        strings(role["responsibilities"], "role.responsibilities", True)
+        strings(role["forbidden"], "role.forbidden", True)
+        subset(role["authority"], authorities, "role.authority")
+        subset(role["receives"], artifacts, "role.receives")
+        subset(role["sends"], artifacts, "role.sends")
+        roles[role_id] = role
+    if not isinstance(spec["relations"], list):
+        raise ValueError("relations: must be a list")
+    seen = set()
+    for relation in spec["relations"]:
+        keys = {"from", "to", "permits", "sends"}
+        require_keys(relation, keys, keys, "relation")
+        sender, receiver = string(relation["from"], "relation.from"), string(relation["to"], "relation.to")
+        if sender not in roles or receiver not in roles or sender == receiver:
+            raise ValueError("relation: unknown or self role reference")
+        if (sender, receiver) in seen:
+            raise ValueError("relation: duplicate endpoints")
+        seen.add((sender, receiver))
+        subset(relation["permits"], set(roles[sender]["authority"]), "relation.permits")
+        subset(relation["sends"], set(roles[sender]["sends"]) & set(roles[receiver]["receives"]), "relation.sends")
+    exchange = spec["exchange"]
+    keys = {"maxRounds", "unresolved", "blockedAcceptanceRequires", "duplicates"}
+    require_keys(exchange, keys, keys, "exchange")
+    positive(exchange["maxRounds"], "exchange.maxRounds")
+    if exchange["unresolved"] != "escalate":
+        raise ValueError("exchange.unresolved must be escalate")
+    subset(exchange["blockedAcceptanceRequires"], {"rework", "human_decision"}, "exchange.blockedAcceptanceRequires", True)
+    duplicate = exchange["duplicates"]
+    require_keys(duplicate, {"assignment", "report"}, {"assignment", "report"}, "exchange.duplicates")
+    if duplicate["assignment"] != "preserve_existing_until_end" or duplicate["report"] != "preserve_existing_unless_content_changed":
+        raise ValueError("exchange.duplicates: unsupported policy")
+    isolation = spec["isolation"]
+    keys = {"advisorCannotReviewOwnAdvice", "workerCannotReviewOwnArtifact"}
+    require_keys(isolation, keys, keys, "isolation")
+    if any(isolation[key] is not True for key in keys):
+        raise ValueError("isolation: separation rules must be true")
     return catalog
 
 
