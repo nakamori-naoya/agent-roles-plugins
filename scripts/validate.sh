@@ -24,7 +24,7 @@ trap 'rm -rf "$TMP_ROOT"' EXIT
 python3 "$PLUGIN/scripts/export_catalog.py" --target "$TMP_ROOT/builtin@1.json" >/dev/null || failed=1
 jq -e '.apiVersion=="roles.harness/v1" and .metadata.name=="builtin" and .metadata.version==1' \
   "$TMP_ROOT/builtin@1.json" >/dev/null || failed=1
-rg -n '^name: assign-agent-roles$' "$PLUGIN/SKILL.md" >/dev/null || failed=1
+rg -n '^name: assign-agent-roles$' "$PLUGIN/skills/assign-agent-roles/SKILL.md" >/dev/null || failed=1
 
 if [ "$failed" -eq 0 ]; then
   echo 'Validation: passed'
