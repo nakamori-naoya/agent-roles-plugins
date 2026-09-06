@@ -5,7 +5,7 @@
   "author": {
     "name": "NaoyaNakamori"
   },
-  "skills": "./",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Agent Roles",
     "shortDescription": "複数agentへ役割と越境禁止を割り当てる",
