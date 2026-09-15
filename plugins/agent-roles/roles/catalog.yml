@@ -56,7 +56,7 @@ spec:
         - 自分の成果物を評価済みとして扱う
         - 依頼範囲外の改善を混ぜる
       authority: [work, stop_self, consult]
-      receives: [assignment]
+      receives: [assignment, research_report]
       sends: [work_result, research_request, escalation]
     - id: reviewer
       version: 1
@@ -95,9 +95,13 @@ spec:
     - {from: manager, to: researcher, permits: [assign, end_assignment], sends: [research_request]}
     - {from: worker, to: manager, permits: [], sends: [work_result, escalation]}
     - {from: worker, to: advisor, permits: [consult], sends: [escalation]}
+    - {from: worker, to: researcher, permits: [], sends: [research_request]}
     - {from: reviewer, to: manager, permits: [block_acceptance], sends: [review_report, escalation]}
+    - {from: reviewer, to: researcher, permits: [], sends: [research_request]}
     - {from: advisor, to: manager, permits: [], sends: [advice, escalation]}
     - {from: researcher, to: manager, permits: [], sends: [research_report, escalation]}
+    - {from: researcher, to: worker, permits: [], sends: [research_report]}
+    - {from: researcher, to: reviewer, permits: [], sends: [research_report]}
   exchange:
     maxRounds: 2
     unresolved: escalate
