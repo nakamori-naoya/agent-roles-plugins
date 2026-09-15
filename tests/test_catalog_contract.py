@@ -21,6 +21,33 @@ class CatalogContract(unittest.TestCase):
     def test_builtin(self):
         self.assertEqual(catalog.validate(self.valid), self.valid)
 
+    def test_every_declared_artifact_has_a_relation_route(self):
+        relations = self.valid['spec']['relations']
+        worker_requests = [
+            relation for relation in relations
+            if relation['from'] == 'worker' and relation['to'] == 'researcher'
+        ]
+        reviewer_requests = [
+            relation for relation in relations
+            if relation['from'] == 'reviewer' and relation['to'] == 'researcher'
+        ]
+        researcher_replies = {
+            relation['to'] for relation in relations
+            if relation['from'] == 'researcher' and 'research_report' in relation['sends']
+        }
+        self.assertEqual(['research_request'], worker_requests[0]['sends'])
+        self.assertEqual(['research_request'], reviewer_requests[0]['sends'])
+        self.assertTrue({'worker', 'reviewer'} <= researcher_replies)
+
+    def test_declared_artifact_without_relation_route_is_rejected(self):
+        document = copy.deepcopy(self.valid)
+        document['spec']['relations'] = [
+            relation for relation in document['spec']['relations']
+            if not (relation['from'] == 'worker' and relation['to'] == 'researcher')
+        ]
+        with self.assertRaisesRegex(ValueError, 'role=worker.*research_request'):
+            catalog.validate(document)
+
     def test_invalid_fields_are_exit_two_without_traceback(self):
         cases = [
             (['metadata', 'name'], ''), (['metadata', 'version'], -1),
