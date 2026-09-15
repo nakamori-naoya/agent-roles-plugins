@@ -96,6 +96,18 @@ marketplaceの取得と、インストール済みパッケージの更新は分
 
 役割の目的、責務、禁止事項、権限、受け渡し関係の正本は`roles/catalog.yml`だけである。他pluginへ内部配置を探索させず、検査済みの版固定JSONを公開成果物として書き出す。
 
+roleの`sends`と`receives`は可能なartifact型、`relations`は実際に許可する送信経路である。workerとreviewerが`research_request`を送る場合はresearcherへのrelationを持ち、researcherの`research_report`が依頼元へ戻るrelationも持つ。
+
+### role通信経路の構造検査宣言
+
+- 正本: `roles/catalog.yml`のrolesとrelations
+- 入力: 構文解析済みRole Catalog
+- 正規化: role IDとartifact型を文字列集合として扱い、relationをfrom/toの有向辺として扱う
+- 合格述語: 各roleが宣言するすべての`sends`は同じroleをfromとするrelationの`sends`に現れ、各`receives`は同じroleをtoとするrelationの`sends`に現れる
+- 診断: 経路のないrole IDとartifact型を示して停止する
+- 正例: worker→researcherの`research_request`とresearcher→workerの`research_report`。反例: workerの`sends`だけにある`research_request`。境界例: `permits`が空でもartifact送信経路は成立する
+- 意味評価として残す範囲: 調査依頼が必要か、調査結果が十分か、どのinstanceへ送るか
+
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/scripts/export_catalog.py" \
   --target "$HOME/.config/agent-roles/catalogs/builtin@1.json"
@@ -116,7 +128,7 @@ bash scripts/validate.sh
 
 `python3 scripts/doctor.py --repository . --repo <対象repository>` はCLI構文、公開skillと設定・依存の解決を読み取り専用で診断する。設定解決を含めない検査は `--distribution-only` を明示する。
 
-`bash scripts/validate.sh` は機能・不正入力・配布の検証を行い、GitHub Actionsの `validate (ubuntu-latest)` / `validate (macos-latest)` でも実行する。[意味的評価シナリオ](evals/scenarios.json)は `scripts/evaluate-skills.py` で実モデルと別のjudgeモデルへ渡し、モデルID・設定・入力・応答・判定根拠を記録する。モデル評価は構造検証と別に実施し、未実行を成功として扱わない。
+`bash scripts/validate.sh` は機能・不正入力・配布の検証を行い、GitHub Actionsの `validate (ubuntu-latest)` / `validate (macos-latest)` でも実行する。[意味的評価シナリオ](evals/scenarios.json)は `scripts/evaluate-skills.py` で実モデルと別のjudgeモデルへ渡し、モデルID・設定・入力・応答・判定根拠を記録する。criterionの真偽は意味評価の記録であり、CLIの合否にはしない。CLIの非zero終了はadapter失敗、不正な応答、根拠不整合など記録を完了できない操作失敗を示す。人またはエージェントが記録を読み、構造検証とは別に根拠付きで評価する。未実行を成功として扱わない。
 
 version更新は `python3 scripts/release.py --plugin <公開plugin名> --version <semver> --notes <変更内容> --breaking <互換性への影響> --migration <移行方法> --checks <codex/claudeの検証結果JSON>` で計画を確認し、`--apply` で両runtimeのmanifestとmarketplaceを更新する。検証結果には未検証も明示できる。配布・外部publishは別操作であり、このcommandでは行わない。
 

@@ -103,6 +103,8 @@ def validate(catalog):
     if not isinstance(spec["relations"], list):
         raise ValueError("relations: must be a list")
     seen = set()
+    routed_sends = {role_id: set() for role_id in roles}
+    routed_receives = {role_id: set() for role_id in roles}
     for relation in spec["relations"]:
         keys = {"from", "to", "permits", "sends"}
         require_keys(relation, keys, keys, "relation")
@@ -113,7 +115,17 @@ def validate(catalog):
             raise ValueError("relation: duplicate endpoints")
         seen.add((sender, receiver))
         subset(relation["permits"], set(roles[sender]["authority"]), "relation.permits")
-        subset(relation["sends"], set(roles[sender]["sends"]) & set(roles[receiver]["receives"]), "relation.sends")
+        routed = subset(relation["sends"], set(roles[sender]["sends"]) & set(roles[receiver]["receives"]), "relation.sends")
+        routed_sends[sender].update(routed)
+        routed_receives[receiver].update(routed)
+    for role_id, role in roles.items():
+        missing_sends = sorted(set(role["sends"]) - routed_sends[role_id])
+        missing_receives = sorted(set(role["receives"]) - routed_receives[role_id])
+        if missing_sends or missing_receives:
+            raise ValueError(
+                f"role communication route is missing: role={role_id}, "
+                f"sends={missing_sends}, receives={missing_receives}"
+            )
     exchange = spec["exchange"]
     keys = {"maxRounds", "unresolved", "blockedAcceptanceRequires", "duplicates"}
     require_keys(exchange, keys, keys, "exchange")
