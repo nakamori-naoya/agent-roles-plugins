@@ -5,9 +5,12 @@
   "author": {
     "name": "NaoyaNakamori"
   },
-  "skills": "./skills/",
+  "skills": [
+    "./skills/assign-agent-roles"
+  ],
   "metadata": {
     "harness": {
+      "marketplace": "agent-roles",
       "contractVersion": 1
     }
   }

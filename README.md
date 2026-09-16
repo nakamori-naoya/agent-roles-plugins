@@ -109,7 +109,8 @@ roleの`sends`と`receives`は可能なartifact型、`relations`は実際に許�
 - 意味評価として残す範囲: 調査依頼が必要か、調査結果が十分か、どのinstanceへ送るか
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/scripts/export_catalog.py" \
+# <package root> は導入した agent-roles package の root（このrepositoryでは plugins/agent-roles）
+python3 "<package root>/scripts/export_catalog.py" \
   --target "$HOME/.config/agent-roles/catalogs/builtin@1.json"
 ```
 
