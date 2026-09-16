@@ -2,19 +2,21 @@
 # Scenario: agent-rolesがYAML catalogを正本として両runtimeへ配布できる。
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+# 保守toolの正本は兄弟checkoutの harness-tools。無ければ止まる（fixtureで代用しない）。
+TOOLS="$ROOT/../harness-tools/tools"
+[ -d "$TOOLS" ] || { echo "[error] 兄弟 checkout harness-tools が無い: $TOOLS" >&2; exit 2; }
 PLUGIN="$ROOT/plugins/agent-roles"
 failed=0
 skill_frontmatter_name() {
   awk 'NR==1 { if ($0 != "---") exit 2; next } $0=="---" { found=1; exit } { print } END { if (!found) exit 2 }' "$1" \
     | yq -er '.name | select(tag == "!!str" and length > 0)' -
 }
-python3 "$ROOT/scripts/test-hardening.py" || failed=1
-python3 "$ROOT/scripts/sync-runtime.py" --check || failed=1
+python3 "$TOOLS/test-hardening.py" --repository "$ROOT" || failed=1
 python3 -m unittest discover -s "$ROOT/tests" -p test_catalog_contract.py || failed=1
 
 
-python3 "$ROOT/scripts/validate-distribution.py" "$ROOT" || failed=1
-python3 "$ROOT/scripts/validate-distribution.py" --self-test "$ROOT" || failed=1
+python3 "$TOOLS/validate-plugin-repository.py" "$ROOT" || failed=1
+python3 "$TOOLS/validate-plugin-repository.py" --self-test || failed=1
 
 for manifest in "$PLUGIN/.codex-plugin/plugin.json" "$PLUGIN/.claude-plugin/plugin.json"; do
   jq -e '.name=="agent-roles" and (.version|test("^[0-9]+[.][0-9]+[.][0-9]+"))' "$manifest" >/dev/null || failed=1
