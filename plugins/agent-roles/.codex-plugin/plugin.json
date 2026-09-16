@@ -5,7 +5,9 @@
   "author": {
     "name": "NaoyaNakamori"
   },
-  "skills": "./skills/",
+  "skills": [
+    "./skills/assign-agent-roles"
+  ],
   "interface": {
     "displayName": "Agent Roles",
     "shortDescription": "複数agentへ役割と越境禁止を割り当てる",
@@ -19,6 +21,7 @@
   },
   "metadata": {
     "harness": {
+      "marketplace": "agent-roles",
       "contractVersion": 1
     }
   }
