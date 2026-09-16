@@ -9,7 +9,7 @@
       "name": "agent-roles",
       "source": "./plugins/agent-roles",
       "description": "manager、advisor、worker、reviewer、researcherの役割を割り当てる",
-      "version": "1.0.1"
+      "version": "2.0.0"
     }
   ]
 }
