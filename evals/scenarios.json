@@ -3,7 +3,7 @@
   "cases": [
     {
       "id": "agent-roles-plugins-contract",
-      "skill": "../plugins/agent-roles/SKILL.md",
+      "skill": "../plugins/agent-roles/skills/assign-agent-roles/SKILL.md",
       "messages": [
         {
           "role": "user",
