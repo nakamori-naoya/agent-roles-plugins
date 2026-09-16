@@ -29,6 +29,3 @@ merge:
     min_approvals: 0
     require_checks_passed: true
     require_no_unresolved_threads: true
-instructions:
-  execution:
-    directive: roleとruntimeの境界を保ち、全検証成功後だけ公開操作を行う
