@@ -10,7 +10,7 @@ description: 複数agentへmanager、advisor、worker、reviewer、researcherの
 ## 入力
 
 - 依頼された仕事と、その完了条件・停止条件。
-- 役割と関係の正本`../../roles/catalog.yml`。pathはこのSKILL.mdがある入口directoryを基準にした相対pathである。
+- 役割と関係の正式な定義`../../roles/catalog.yml`。pathはこのSKILL.mdがある入口directoryを基準にした相対pathである。
 
 ## 判断基準
 
@@ -45,7 +45,7 @@ Fleetなど別の実行機構へ渡す場合は、相手にplugin内部fileを�
 
 | 呼び出し | 入力 | 出力 | 失敗の観測 | 失敗時 |
 |---|---|---|---|---|
-| `python3 ../../scripts/export_catalog.py --target "$HOME/.config/agent-roles/catalogs/builtin@1.json"` | 正本`../../roles/catalog.yml` | stdoutに`{"ok": true, "result": ...}`、targetへ検査済みJSON | 終了code 2、stdoutに`{"ok": false, "error": ...}`。既存内容が異なる場合はここで止まる | 変更内容を確認して版の扱いを決めた後だけ`--replace`を付けて再実行する |
+| `python3 ../../scripts/export_catalog.py --target "$HOME/.config/agent-roles/catalogs/builtin@1.json"` | 基準資料`../../roles/catalog.yml` | stdoutに`{"ok": true, "result": ...}`、targetへ検査済みJSON | 終了code 2、stdoutに`{"ok": false, "error": ...}`。既存内容が異なる場合はここで止まる | 変更内容を確認して版の扱いを決めた後だけ`--replace`を付けて再実行する |
 
 書き出した成果物は役割Catalogの固定版であり、Fleetの実行状態ではない。
 

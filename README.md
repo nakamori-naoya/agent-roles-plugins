@@ -94,13 +94,13 @@ marketplaceの取得と、インストール済みパッケージの更新は分
 
 ## 公開する役割Catalog
 
-役割の目的、責務、禁止事項、権限、受け渡し関係の正本は`roles/catalog.yml`だけである。他pluginへ内部配置を探索させず、検査済みの版固定JSONを公開成果物として書き出す。
+役割の目的、責務、禁止事項、権限、受け渡し関係の正式な定義は`roles/catalog.yml`だけである。他pluginへ内部配置を探索させず、検査済みの版固定JSONを公開成果物として書き出す。
 
 roleの`sends`と`receives`は可能なartifact型、`relations`は実際に許可する送信経路である。workerとreviewerが`research_request`を送る場合はresearcherへのrelationを持ち、researcherの`research_report`が依頼元へ戻るrelationも持つ。
 
 ### role通信経路の構造検査宣言
 
-- 正本: `roles/catalog.yml`のrolesとrelations
+- 基準資料: `roles/catalog.yml`のrolesとrelations
 - 入力: 構文解析済みRole Catalog
 - 正規化: role IDとartifact型を文字列集合として扱い、relationをfrom/toの有向辺として扱う
 - 合格述語: 各roleが宣言するすべての`sends`は同じroleをfromとするrelationの`sends`に現れ、各`receives`は同じroleをtoとするrelationの`sends`に現れる
@@ -116,7 +116,7 @@ python3 "<package root>/scripts/export_catalog.py" \
 
 Fleetなどの利用側は、この明示的に書き出したJSONを入力として受け取る。利用側が役割名や役割本文を複製してはならない。Catalogの書き出しはagent instanceの作成、タスク割当、Fleet起動を行わない。
 
-役割を選ぶ基準、兼任禁止、成果報告から受容までの業務ルールとBDDは、[エージェント役割割当の業務知識と振る舞い](docs/2026-09-02-エージェント役割割当-業務知識と振る舞い.md)を正本とする。
+役割を選ぶ基準、兼任禁止、成果報告から受容までの業務ルールとBDDは、[エージェント役割割当の業務知識と振る舞い](docs/2026-09-02-エージェント役割割当-業務知識と振る舞い.md)を正式な定義とする。
 
 ## 検証
 
@@ -127,7 +127,7 @@ bash scripts/validate.sh
 
 ## 実行契約の検証と配布
 
-保守用tool（doctor / lint-consumer-contract / evaluate-skills / release / test-hardening / validate-plugin-repository）の正本は兄弟checkoutの `../harness-tools/` であり、このrepositoryは複製を持たない。`scripts/validate.sh` は `../harness-tools/tools/` の実在を確認してから呼び、無ければ止まる。CIの `validate.yml` も `harness-tools` を兄弟checkoutして `harness-tools/ci/validate.sh` を実行する。呼び方は `../harness-tools/README.md` にある。
+保守用tool（doctor / lint-consumer-contract / evaluate-skills / release / test-hardening / validate-plugin-repository）の実装元は兄弟checkoutの `../harness-tools/` であり、このrepositoryは複製を持たない。`scripts/validate.sh` は `../harness-tools/tools/` の実在を確認してから呼び、無ければ止まる。CIの `validate.yml` も `harness-tools` を兄弟checkoutして `harness-tools/ci/validate.sh` を実行する。呼び方は `../harness-tools/README.md` にある。
 
 `python3 ../harness-tools/tools/doctor.py --repository <このrepositoryの絶対path> --repo <対象repository>` はCLI構文、公開skillと設定・依存の解決を読み取り専用で診断する。設定解決を含めない検査は `--distribution-only` を明示する。
 
