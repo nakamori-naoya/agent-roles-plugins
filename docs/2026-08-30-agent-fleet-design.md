@@ -11,7 +11,7 @@
 
 **課題**: role、fleet、pane 配置、指示配送、fleet 間連携が同じ層へ入ると、Herdr の都合が艦隊の業務ルールになる。pane の移動や再生成だけで宛先が壊れ、別 runtime も選べない。
 
-**推奨案**: reusableなroleと権限上限は`agent-roles`、fleetのdesired state、roleRef、task、command、eventは`Fleet Core`を正本にする。HerdrはRuntime AdapterとView Adapterに分ける。
+**推奨案**: reusableなroleと権限上限は`agent-roles`を正式な定義とし、fleetのdesired state、roleRef、task、command、eventは`Fleet Core`を一次データとする。HerdrはRuntime AdapterとView Adapterに分ける。
 
 **決定**: role catalogとFleetを別repositoryにし、FleetもCoreとHerdr Adapterを別installable pluginにする。MVPはlocal Herdr、manager 1、worker 2へ絞る。
 
@@ -19,7 +19,7 @@
 
 **現行 v2 には、複数エージェントを艦隊として編成し、指揮する plugin がない。** 旧モノレポには5つの role と関係性を定義する `agent-roles` がある。ただし、この plugin はエージェントを起動しない。
 
-**herdr-remote は監視・手動操作の PoC であり、艦隊の正本には向かない。** 現行実装は host、workspace、tab、pane を直接扱う。role、論理 Agent ID、task、権限、fleet はモデル化していない。
+**herdr-remote は監視・手動操作の PoC であり、艦隊状態の一次データには向かない。** 現行実装は host、workspace、tab、pane を直接扱う。role、論理 Agent ID、task、権限、fleet はモデル化していない。
 
 [herdr-remote の設計](../../../herdr-remote/DESIGN.md) は「**非目標: 疎結合・堅牢なアーキテクチャ。**」と明記する。この制約を尊重し、Fleet Core を herdr-remote へ埋め込まない。
 
@@ -54,7 +54,7 @@
 
 *図1: Fleet Core は pane ID を知らない。Herdr 固有値は adapter 内の Runtime Binding と View Placement に閉じる。*
 
-| 関心 | 正本 | Herdr 依存 | 主な責務 |
+| 関心 | 基準資料 | Herdr 依存 | 主な責務 |
 |---|---|---:|---|
 | role と権限 | Role Registry / Policy Engine | なし | 入出力、許可操作、禁止操作、停止条件 |
 | fleet 編成 | Fleet Spec / Controller | なし | desired state、replica、lifecycle、reconcile |
@@ -265,7 +265,7 @@ agent-fleet-plugins/
 
 永続 controller は skill prompt の外に置く。MVP は `fleetctl reconcile` の明示実行で始め、必要になった時点で `fleetd` へ常駐化する。
 
-各 leaf plugin は install 後に自己完結させる。repository root の `shared/` は開発時正本に限定し、配布物へ必要な copy を置く。
+各 leaf plugin は install 後に自己完結させる。repository root の `shared/` は開発時の参照元に限定し、配布物へ必要な copy を置く。
 
 ### MVP
 
@@ -299,7 +299,7 @@ MVP の受け入れ条件は3つある。検査済みFleet Specからcommand-dec
 |---|---|---|---|
 | terminal state の誤読 | idle / done を task 完了とみなす | 未完了を受容する | task event と agent state を分離する |
 | prompt の重複配送 | timeoutを未送信とみなして再送する | 同じ作業を二重実行する | unknown、idempotency、ackを使う |
-| manager の停止 | manager pane が閉じる | fleet が孤児化する | durable controller を正本にする |
+| manager の停止 | manager pane が閉じる | fleet が孤児化する | durable controller の状態を一次データにする |
 | layout drift | 人間が pane を move / close する | 表示と binding がずれる | generation と drift event を使う |
 | version 差 | Herdr command が変わる | adapter が起動できない | capability negotiationを行う |
 | prompt を権限と誤認 | agentが指示を無視・逸脱する | 禁止操作が通る | command受付でPolicyを強制する |
