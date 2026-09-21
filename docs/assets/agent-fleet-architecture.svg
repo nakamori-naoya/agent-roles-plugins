@@ -43,7 +43,7 @@
   <path d="M828 227 L828 260 L640 260 L640 290" class="arrow"/>
   <text x="535" y="252" class="small">型付き command / query</text>
 
-  <text x="72" y="286" class="layer">FLEET CORE — 正本</text>
+  <text x="72" y="286" class="layer">FLEET CORE — 一次データ</text>
   <g filter="url(#shadow)">
     <rect x="72" y="300" width="1296" height="300" rx="20" fill="#eef4ff" stroke="#2563eb" stroke-width="2"/>
   </g>
