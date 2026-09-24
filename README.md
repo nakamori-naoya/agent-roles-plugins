@@ -142,4 +142,8 @@ version更新は `python3 ../harness-tools/tools/release.py --repo <このreposi
 
 ## このpackageが持つ判断
 
-`agent-roles` は、役割（manager、advisor、worker、reviewer、researcher）が何を産出し、どの権限を持ち、何をしてはならないかの判断を持つ。base branchへ統合できる役割は受容を決めるmanagerだけであること、managerが作業者へ渡す承認範囲に統合を含めないこと、workerが片付けてよい範囲もここにある。統合してよいかは利用者とrepositoryの方針が決め、mergeしてよい機械状態は `agent-work-policy` が決める。
+`agent-roles` は、役割（manager、advisor、worker、reviewer、researcher）が何を産出し、どの権限を持ち、何をしてはならないかを持つ。正式な定義は Role Catalog（`plugins/agent-roles/roles/catalog.yml`）である。
+
+base branchへ統合できる役割は、受容を決める manager だけである。manager は、作業者へ渡す承認範囲に統合を含めない。worker が片付けてよいのは、自分に割り当てられた作業場所だけである。これらもこの package が持つ。
+
+統合してよいかは、利用者と repository の方針が決める。merge してよい機械の状態は `agent-work-policy` が決める。
