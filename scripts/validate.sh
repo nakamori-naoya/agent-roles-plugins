@@ -31,9 +31,9 @@ printf '%s\n' '---' "name: 'fixture-skill' # comment" '---' 'name: body-only' > 
 printf '%s\n' '---' 'description: no name' '---' 'name: body-only' > "$TMP_ROOT/frontmatter-invalid.md"
 [ "$(skill_frontmatter_name "$TMP_ROOT/frontmatter-valid.md")" = "fixture-skill" ] \
   && ! skill_frontmatter_name "$TMP_ROOT/frontmatter-invalid.md" >/dev/null 2>&1 || failed=1
-python3 "$PLUGIN/scripts/export_catalog.py" --target "$TMP_ROOT/builtin@1.json" >/dev/null || failed=1
-jq -e '.apiVersion=="roles.harness/v1" and .metadata.name=="builtin" and .metadata.version==1' \
-  "$TMP_ROOT/builtin@1.json" >/dev/null || failed=1
+python3 "$PLUGIN/scripts/export_catalog.py" --target "$TMP_ROOT/builtin@2.json" >/dev/null || failed=1
+jq -e '.apiVersion=="roles.harness/v1" and .metadata.name=="builtin" and .metadata.version==2' \
+  "$TMP_ROOT/builtin@2.json" >/dev/null || failed=1
 [ "$(skill_frontmatter_name "$PLUGIN/skills/assign-agent-roles/SKILL.md")" = "assign-agent-roles" ] || failed=1
 
 if [ "$failed" -eq 0 ]; then
