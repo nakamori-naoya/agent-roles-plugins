@@ -112,7 +112,7 @@ roleの`sends`と`receives`は可能なartifact型、`relations`は実際に許�
 ```bash
 # <package root> は導入した agent-roles package の root（このrepositoryでは plugins/agent-roles）
 python3 "<package root>/scripts/export_catalog.py" \
-  --target "$HOME/.config/agent-roles/catalogs/builtin@1.json"
+  --target "$HOME/.config/agent-roles/catalogs/builtin@2.json"
 ```
 
 Fleetなどの利用側は、この明示的に書き出したJSONを入力として受け取る。利用側が役割名や役割本文を複製してはならない。Catalogの書き出しはagent instanceの作成、タスク割当、Fleet起動を行わない。

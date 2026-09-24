@@ -100,7 +100,7 @@ def validate(catalog):
         subset(role["receives"], artifacts, "role.receives")
         subset(role["sends"], artifacts, "role.sends")
         roles[role_id] = role
-    # 共有の統合先を変えるのは、受容を決める一者だけである。統合の順序を知らない役割が統合すると、古いbaseのまま統合される。
+    # 共有の統合先を変えられるのは、受容を決める一者だけである。受容する者と統合する者が分かれると、受容していない成果物が統合先に入る。
     integrators = sorted(role_id for role_id, role in roles.items() if "integrate" in role["authority"])
     acceptors = sorted(role_id for role_id, role in roles.items() if "accept" in role["authority"])
     if len(integrators) != 1 or integrators != acceptors:
