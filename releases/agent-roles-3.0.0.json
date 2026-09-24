@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "plugin": "agent-roles",
+  "version": "3.0.0",
+  "created_at": "2026-09-24T13:55:14.620363+00:00",
+  "notes": "base branchへの統合（integrate）をmanagerだけの権限にし、workerの禁止に統合と共有資源の破棄を加えた。integrateはacceptを持つ唯一のroleにだけ許すことをCatalog検査で確かめる。assign-agent-rolesの判断基準を見出しと文章に書き直した。",
+  "breaking": "authority integrate を追加し、Catalog検査は integrate を accept を持つ唯一のroleだけに許す。利用者が独自Catalogを持つ場合は manager 相当の role に integrate を加える必要がある。",
+  "migration": "書き出し済みのCatalog JSONは export_catalog.py --replace で書き直す。",
+  "checks": {
+    "codex": {
+      "status": "manifest-and-contract-tests-passed",
+      "native-client-installation": "not-executed（merge 後に install-plugins.sh で導入）",
+      "evidence": "bash scripts/validate.sh: exit 0 (Validation: passed)"
+    },
+    "claude": {
+      "status": "manifest-and-contract-tests-passed",
+      "native-client-installation": "not-executed（merge 後に install-plugins.sh で導入）",
+      "evidence": "bash scripts/validate.sh: exit 0 (Validation: passed)"
+    },
+    "root-validation": "root scripts/validate.sh agent-roles-plugins: Root validation: passed"
+  },
+  "files": [
+    ".agents/plugins/marketplace.json",
+    "plugins/agent-roles/.codex-plugin/plugin.json",
+    ".claude-plugin/marketplace.json",
+    "plugins/agent-roles/.claude-plugin/plugin.json"
+  ]
+}

@@ -22,11 +22,13 @@ spec:
         - 必要なroleを割り当て、不要になったroleの割当を終了する
         - 指摘の採否と未解決の価値判断を決める
         - 完了条件に対する成果物の受容を記録する
+        - 受容した成果物を共有の統合先（base branch）へ統合する順序と実行を持ち、統合で進んだbaseへの追従を作業者へ指示する
+        - 共有の作業場所、branch、実行資源を破棄するかを決める
       forbidden:
         - 作業者の成果物を自分で実装する
         - 手順を指定して作業者の判断を奪う
         - reviewerの指摘を記録せずに消す
-      authority: [assign, end_assignment, accept, reject]
+      authority: [assign, end_assignment, accept, reject, integrate]
       receives: [work_result, review_report, advice, research_report, escalation]
       sends: [assignment, review_request, research_request]
     - id: advisor
@@ -55,6 +57,8 @@ spec:
         - 完了条件を書き換える
         - 自分の成果物を評価済みとして扱う
         - 依頼範囲外の改善を混ぜる
+        - 共有の統合先（base branch）を変更する。成果物は統合せず、完了報告で止まる
+        - 共有の作業場所、branch、実行資源を破棄する
       authority: [work, stop_self, consult]
       receives: [assignment, research_report]
       sends: [work_result, research_request, escalation]
