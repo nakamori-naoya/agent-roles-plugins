@@ -3,9 +3,9 @@
   "plugin": "agent-roles",
   "version": "3.0.0",
   "created_at": "2026-09-24T13:55:14.620363+00:00",
-  "notes": "base branchへの統合（integrate）をmanagerだけの権限にし、workerの禁止に統合と共有資源の破棄を加えた。integrateはacceptを持つ唯一のroleにだけ許すことをCatalog検査で確かめる。assign-agent-rolesの判断基準を見出しと文章に書き直した。",
-  "breaking": "authority integrate を追加し、Catalog検査は integrate を accept を持つ唯一のroleだけに許す。利用者が独自Catalogを持つ場合は manager 相当の role に integrate を加える必要がある。",
-  "migration": "書き出し済みのCatalog JSONは export_catalog.py --replace で書き直す。",
+  "notes": "base branchへの統合（integrate）を受容を決めるmanagerだけに許し、統合してよいかは利用者とrepositoryの方針が決めると分けて書いた。managerは作業者へ渡す承認範囲にmergeを含めない。workerは自分に割り当てられた作業場所の外を破棄しない。integrateはacceptを持つ唯一のroleにだけ許すことをCatalog検査で確かめる。Catalogとmanager・workerの版を2に上げた。assign-agent-rolesを見出しと文章で書き直した。",
+  "breaking": "Role Catalogの版を builtin@1 から builtin@2 に上げた（manager・workerの定義と検査の述語が変わったため）。agent-fleet の既定の参照先も builtin@2 に変える必要がある。独自Catalogを持つ場合は、manager相当のroleにだけ integrate を加える。",
+  "migration": "export_catalog.py で ~/.config/agent-roles/catalogs/builtin@2.json を書き出す。agent-fleet は builtin@2 を読む版へ更新する。",
   "checks": {
     "codex": {
       "status": "manifest-and-contract-tests-passed",
