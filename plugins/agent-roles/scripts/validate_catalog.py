@@ -81,7 +81,7 @@ def validate(catalog):
     artifacts = strings(spec["artifactTypes"], "artifactTypes", True)
     if not isinstance(spec["roles"], list) or not spec["roles"]:
         raise ValueError("roles: must be a non-empty list")
-    authorities = {"assign", "end_assignment", "accept", "reject", "consult", "work", "stop_self", "block_acceptance", "research"}
+    authorities = {"assign", "end_assignment", "accept", "reject", "integrate", "consult", "work", "stop_self", "block_acceptance", "research"}
     products = {"decision", "opinion", "artifact", "refutation", "fact"}
     roles = {}
     keys = {"id", "version", "produces", "mission", "responsibilities", "forbidden", "authority", "receives", "sends"}
@@ -100,6 +100,11 @@ def validate(catalog):
         subset(role["receives"], artifacts, "role.receives")
         subset(role["sends"], artifacts, "role.sends")
         roles[role_id] = role
+    # 共有の統合先を変えるのは、受容を決める一者だけである。統合の順序を知らない役割が統合すると、古いbaseのまま統合される。
+    integrators = sorted(role_id for role_id, role in roles.items() if "integrate" in role["authority"])
+    acceptors = sorted(role_id for role_id, role in roles.items() if "accept" in role["authority"])
+    if len(integrators) != 1 or integrators != acceptors:
+        raise ValueError(f"integrate authority must belong to exactly the one role that holds accept: integrate={integrators}, accept={acceptors}")
     if not isinstance(spec["relations"], list):
         raise ValueError("relations: must be a list")
     seen = set()

@@ -14,18 +14,21 @@ description: 複数agentへmanager、advisor、worker、reviewer、researcherの
 
 ## 判断基準
 
-| 観察対象 | 判定 |
-|---|---|
-| Catalogを使えるか | `validate_catalog.py`が終了code 0を返したCatalogだけを使う |
-| 役割を立てるか | その役割が産出する成果物の型が仕事に要るときだけ立てる。全roleを常に立てる必要はない |
-| 兼任 | 必要なroleの担い手がいないとき、別roleへ暗黙に兼任させない。advisorが助言した成果物を同じadvisorがreviewすること、workerが自分の成果物をreviewすることは越境である |
-| managerの権限 | 目的、完了条件、停止条件、最終判断を持つ |
-| advisorの成果物 | 選択肢とトレードオフ。合否は判定しない |
-| workerの成果物 | 成果物と検証結果。自分の成果物を評価済みにしない |
-| reviewerの成果物 | 作業経緯から独立して再現可能な反証。修正はしない |
-| researcherの成果物 | 出典と時点のある事実。推奨はしない |
-| reviewerの再現可能な指摘 | managerが採否を決める。未検証範囲を「問題なし」へ変換しない |
-| Catalogへ書くもの | role definitionとassignmentだけ。agent instance、model、task、Herdr pane、runtime binding、UI layoutはFleet側の関心なので書き足さない |
+### 役割は成果物の型で立てる
+
+`validate_catalog.py` が終了code 0を返したCatalogだけを使う。役割は、その役割が産出する成果物の型が仕事に要るときだけ立てる。全roleを常に立てる必要はない。managerは目的、完了条件、停止条件、最終判断を持つ。advisorは選択肢とトレードオフを返し、合否は判定しない。workerは成果物と検証結果を返し、自分の成果物を評価済みにしない。reviewerは作業経緯から独立した再現可能な反証を返し、修正はしない。researcherは出典と時点のある事実を返し、推奨はしない。reviewerの再現可能な指摘の採否はmanagerが決め、未検証の範囲を「問題なし」へ変えない。
+
+### 兼任で埋めない
+
+必要なroleの担い手がいないとき、別roleへ暗黙に兼任させない。advisorが助言した成果物を同じadvisorがreviewすること、workerが自分の成果物をreviewすることは越境である。
+
+### 統合するのはmanagerだけである
+
+共有の統合先（base branch）へ成果物を統合するのは、受容を決めるmanagerだけである（Catalogの `integrate`）。workerは完了報告で止まり、自分の成果物を統合しない。統合の順序を知らない役割が統合すると、先に入った変更を含まない古いbaseのまま統合され、統合先が壊れるからである。managerは受容した成果物を一件ずつ統合し、統合でbaseが進んだら、残りの作業者へbaseへの追従を指示する。共有の作業場所、branch、実行資源を破棄するかを決めるのもmanagerである。agentが一体だけの仕事では、そのagentがmanagerを兼ねるので、この区別は結果を変えない。
+
+### Catalogへ書くもの
+
+Catalogへはrole definitionとassignmentだけを書く。agent instance、model、task、Herdr pane、runtime binding、UI layoutはFleet側の関心なので書き足さない。
 
 ## 手順
 
