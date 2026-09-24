@@ -48,6 +48,19 @@ class CatalogContract(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'role=worker.*research_request'):
             catalog.validate(document)
 
+    def test_only_the_accepting_role_integrates(self):
+        roles = {role['id']: role for role in self.valid['spec']['roles']}
+        self.assertIn('integrate', roles['manager']['authority'])
+        self.assertNotIn('integrate', roles['worker']['authority'])
+        for mutate in (
+            lambda doc: doc['spec']['roles'][2]['authority'].append('integrate'),  # 反例: workerも統合できる
+            lambda doc: doc['spec']['roles'][0]['authority'].remove('integrate'),  # 反例: 誰も統合できない
+        ):
+            document = copy.deepcopy(self.valid)
+            mutate(document)
+            with self.assertRaisesRegex(ValueError, 'integrate authority'):
+                catalog.validate(document)
+
     def test_invalid_fields_are_exit_two_without_traceback(self):
         cases = [
             (['metadata', 'name'], ''), (['metadata', 'version'], -1),
