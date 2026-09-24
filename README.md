@@ -139,3 +139,7 @@ version更新は `python3 ../harness-tools/tools/release.py --repo <このreposi
 ### 破壊的変更と移行
 
 公開入口は同名SKILLの薄い別入口を廃止して一意にした。古い内部SKILL pathを直接参照している呼出元は公開manifestのskillsへ切り替える。設定の一時fileはshell終了では削除されず、返却された絶対pathを次の工程へ渡し、完了・停止時にrun-configのcleanupでそのrunだけを削除する。以前の一時fileや異なる実行identityを再利用せず、新しいrunを開始する。
+
+## このpackageが持つ判断
+
+`agent-roles` は、役割（manager、advisor、worker、reviewer、researcher）が何を産出し、どの権限を持ち、何をしてはならないかの判断を持つ。base branchへ統合できる役割は受容を決めるmanagerだけであること、managerが作業者へ渡す承認範囲に統合を含めないこと、workerが片付けてよい範囲もここにある。統合してよいかは利用者とrepositoryの方針が決め、mergeしてよい機械状態は `agent-work-policy` が決める。
