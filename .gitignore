@@ -15,4 +15,3 @@ __pycache__/
 !/README.md
 !/.gitignore
 !/tests/
-!/releases/
