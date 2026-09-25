@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: agent-rolesがYAML catalogを正式な定義として両runtimeへ配布できる。
+# Scenario: agent-rolesが役割のCatalogを検査済みで両runtimeへ配布できる。
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # 保守toolの実装元は兄弟checkoutの harness-tools。無ければ止まる（fixtureで代用しない）。
