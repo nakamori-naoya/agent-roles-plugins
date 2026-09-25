@@ -10,8 +10,7 @@
   ],
   "metadata": {
     "harness": {
-      "marketplace": "agent-roles",
-      "contractVersion": 1
+      "marketplace": "agent-roles"
     }
   }
 }
