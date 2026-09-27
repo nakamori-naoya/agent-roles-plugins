@@ -4,8 +4,5 @@
 
 このrepositoryは、複数agentへ成果物の型に基づく役割を割り当てる`agent-roles` marketplaceのsourceである。
 
-- role definition、artifact type、role間の関係はYAMLを正式な定義とする。
-- marketplaceへ公開するインストール対象は、利用者の役割定義作業を完了させる`agent-roles`だけにする。内部処理を別entryへ分解しない。
-- roleとagent instance、task、model、runtime binding、pane layoutを混同しない。
-- このpluginはagentを起動せず、Herdrや他runtimeを操作しない。
-- advisorとreviewer、workerとreviewerを同じ成果物で兼任させない。
+- 役割ごとの成果物、権限、受け渡し、してはいけないことは `plugins/agent-roles/roles/catalog.yml` だけが持つ。SKILL.md は役割を当てはめるときの判断だけを持ち、役割の定義を文章で書き直さない。
+- marketplaceへ公開するインストール対象は`agent-roles`だけにし、内部処理を別entryへ分解しない。
