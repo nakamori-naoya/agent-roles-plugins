@@ -6,7 +6,7 @@
 
 [SKILL.md](plugins/agent-roles/skills/assign-agent-roles/SKILL.md)は三つの判断を持つ。役割はその成果物が仕事に要るときだけ立て、兼任で埋めない。baseへ統合できるのは受け入れを決めるmanagerだけで、workerは完了報告で止まる。reviewerの反証は受け入れの前に置く。
 
-役割と関係は `plugins/agent-roles/roles/catalog.yml` に機械が読む形で置き、agent fleetのような実行の仕組みへ渡すときだけ、検査済みのJSONを `~/.config/agent-roles/catalogs/builtin@2.json` へ書き出す。このpluginはエージェントを起動せず、task、model、paneの配置も決めない。
+役割ごとの成果物、権限、受け渡し、してはいけないことは `plugins/agent-roles/roles/catalog.yml` だけが持つ。agent fleetのような実行の仕組みへ渡すときだけ、検査済みのJSONを `~/.config/agent-roles/catalogs/builtin@2.json` へ書き出す。このpluginはエージェントを起動せず、task、model、paneの配置も決めない。
 
 ## インストール
 
